@@ -256,6 +256,7 @@ if ( ! class_exists( 'fix_duplicated_occurrences' ) ) {
 					'posts_per_page' => -1,
 					'order' => 'ASC',
 					'fields' => 'ids',
+					'post_status' => 'publish',
 					'tax_query' => array(
 						'relationship' => 'AND',
 						array(
