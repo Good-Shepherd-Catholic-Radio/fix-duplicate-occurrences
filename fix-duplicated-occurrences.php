@@ -304,6 +304,9 @@ if ( ! class_exists( 'fix_duplicated_occurrences' ) ) {
 						// This is an intermediary array to ensure we do not accidentally delete all occurrences if they were never broken from the Series
 						$delete = array();
 
+						// In some weird cases, multiple of the same Event were broken from the series at the same DateTime
+						$broken_from_series = array();
+
 						if ( count( $post_ids ) > 1 ) {
 
 							foreach ( $post_ids as $post_id ) {
@@ -312,12 +315,24 @@ if ( ! class_exists( 'fix_duplicated_occurrences' ) ) {
 								if ( wp_get_post_parent_id( $post_id ) ) {
 									$delete[] = $post_id;
 								}
+								else {
+									$broken_from_series[] = $post_id;
+								}
 
 							}
 
 							// If we were about to remove every occurrence for the timeslot, preserve one of them
 							if ( count( $delete ) == count( $post_ids ) ) {
 								unset( $delete[0] );
+							}
+
+							if ( count( $broken_from_series ) > 1 ) {
+
+								// Keep first/original
+								unset( $broken_from_series[0] );
+
+								$delete = array_merge( $delete, $broken_from_series );
+
 							}
 
 						}
